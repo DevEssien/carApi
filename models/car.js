@@ -12,7 +12,7 @@ const Car = sequelize.define("Car", {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    make: {
+    brand: {
         type: DataTypes.STRING,
         defaultValue: null,
     },
@@ -20,8 +20,8 @@ const Car = sequelize.define("Car", {
         type: DataTypes.STRING,
         defaultValue: null,
     },
-    year: {
-        type: DataTypes.STRING,
+    years: {
+        type: DataTypes.INTEGER,
         defaultValue: null,
     },
     model: {
@@ -32,12 +32,12 @@ const Car = sequelize.define("Car", {
         type: DataTypes.STRING,
         defaultValue: null,
     },
-    exterior_color: {
+    engine_type: {
         type: DataTypes.STRING,
         defaultValue: null,
     },
-    description: {
-        type: DataTypes.STRING,
+    doors: {
+        type: DataTypes.INTEGER,
         defaultValue: null,
     },
 });
