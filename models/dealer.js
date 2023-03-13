@@ -16,9 +16,13 @@ const Dealer = sequelize.define("Dealer", {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    image_url: {
+    password: {
         type: DataTypes.STRING,
         allowNull: false,
+    },
+    image_url: {
+        type: DataTypes.STRING,
+        defaultValue: null,
     },
     phoneno: {
         type: DataTypes.STRING,
