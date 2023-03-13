@@ -13,6 +13,9 @@ app.use(bodyParser.json());
 app.use(dealerRoute);
 
 const create_table = async () => {
+    // await Car.sync({ force: true });
+    // await Dealer.sync({ force: true });
+
     await Car.sync();
     await Dealer.sync();
 };

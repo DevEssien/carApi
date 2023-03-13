@@ -24,6 +24,10 @@ const Car = sequelize.define("Car", {
         type: DataTypes.INTEGER,
         defaultValue: null,
     },
+    price: {
+        type: DataTypes.INTEGER,
+        defaultValue: null,
+    },
     model: {
         type: DataTypes.STRING,
         defaultValue: null,
