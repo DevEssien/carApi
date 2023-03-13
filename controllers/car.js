@@ -1,7 +1,7 @@
 const axios = require("axios");
 
 exports.getCars = async (req, res, next) => {
-    const url = "https://carapi.app/api/makes";
+    const url = "https://carapi.app/api/models";
     try {
         const response = await axios.get(url, {
             method: "GET",
@@ -11,7 +11,6 @@ exports.getCars = async (req, res, next) => {
                 api_secret: "730ad4bc7e4e427b20baa438b5ec6d33",
             },
         });
-        console.log("response", response.data);
         return res.status(response.status).json({
             status: "Successful",
             message: "Getting data",
