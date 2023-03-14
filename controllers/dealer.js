@@ -25,6 +25,24 @@ exports.postAddCar = async (req, res, next) => {
     }
 };
 
+exports.editCarDetails = async (req, res, next) => {
+    const { name, brand, image_url, price } = req.body;
+    try {
+        return res.json({
+            status: "Successful",
+            message: "Created a new car",
+            data: {
+                car: updatedCar,
+            },
+        });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+};
+
 const clearImage = (filePath) => {
     filePath = path.join(__dirname, "..", filePath);
     fs.unlink(filePath, (err) => console.log(err));
