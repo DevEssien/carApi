@@ -16,7 +16,7 @@ const Car = sequelize.define("Car", {
         type: DataTypes.STRING,
         defaultValue: null,
     },
-    imageUrl: {
+    image_url: {
         type: DataTypes.STRING,
         defaultValue: null,
     },

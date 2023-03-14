@@ -4,7 +4,8 @@ const path = require("path");
 const fs = require("fs");
 const multer = require("multer");
 
-const dealerRoute = require("./routes/dealer-auth");
+const dealerAuthRoute = require("./routes/dealer-auth");
+const dealerRoute = require("./routes/dealer");
 const homeRoute = require("./routes/home");
 const Car = require("./models/car");
 const Dealer = require("./models/dealer");
@@ -24,9 +25,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(multer({ storage: fileStorage }).single("image"));
 
-app.use(homeRoute);
-app.use("/dealer", dealerRoute);
-
 app.use((error, req, res, next) => {
     const status = error?.statusCode || 500;
     const message = error?.message || "Server Side Error!";
@@ -38,11 +36,37 @@ app.use((error, req, res, next) => {
     });
 });
 
+app.use(async (req, res, next) => {
+    try {
+        const dealer = await Dealer.findOne({ where: { email: req.body?.email } });
+        if (!dealer) {
+            console.log("No dealer found!");
+            return;
+        }
+        req.dealer = dealer;
+        next();
+    } catch (error) {
+        console.log(error);
+    }
+});
+
+app.use(homeRoute);
+app.use("/auth/dealer", dealerAuthRoute);
+app.use("/dealer", dealerRoute);
+
+Dealer.hasMany(Car);
+
+Car.belongsTo(Dealer, {
+    constraints: true,
+    onDelete: "CASCADE",
+});
+
 const create_table = async () => {
     // await Car.sync({ force: true });
     // await Dealer.sync({ force: true });
     // await Car.sync();
     // await Dealer.sync();
+    // await Dealer.destroy({ where: { email: "essienemma300@gmail.com" } });s
 };
 // create_table();
 

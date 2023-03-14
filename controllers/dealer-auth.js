@@ -77,8 +77,3 @@ exports.postLogin = async (req, res, next) => {
         next(error);
     }
 };
-
-const clearImage = (filePath) => {
-    filePath = path.join(__dirname, "..", filePath);
-    fs.unlink(filePath, (err) => console.log(err));
-};

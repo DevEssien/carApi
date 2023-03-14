@@ -1,13 +1,13 @@
 const express = require("express");
 
-const dealerController = require("../controllers/dealer-auth");
+const dealerAuthController = require("../controllers/dealer-auth");
 
 const router = express.Router();
 
-router.get("/", dealerController.getDealerPage);
+router.get("/", dealerAuthController.getDealerPage);
 
-router.post("/signup", dealerController.postSignup);
+router.post("/signup", dealerAuthController.postSignup);
 
-router.post("/login", dealerController.postLogin);
+router.post("/login", dealerAuthController.postLogin);
 
 module.exports = router;
