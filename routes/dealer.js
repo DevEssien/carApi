@@ -8,4 +8,6 @@ router.post("/add-car", dealerController.postAddCar);
 
 router.post("/edit-car", dealerController.editCarDetails);
 
+router.post("/delete-car", dealerController.postRemoveCar);
+
 module.exports = router;
