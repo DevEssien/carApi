@@ -26,11 +26,22 @@ exports.postAddCar = async (req, res, next) => {
 };
 
 exports.editCarDetails = async (req, res, next) => {
-    const { name, brand, image_url, price } = req.body;
+    const { id, name, brand, image_url, price } = req.body;
     try {
+        const car = await Car.findOne({ where: { id: id } });
+        if (!car) {
+            const error = new Error("Car not found");
+            error.statusCode = 404;
+            throw error;
+        }
+        car.name = name;
+        car.brand = brand;
+        car.price = price;
+        const updatedCar = await car.save();
+
         return res.json({
             status: "Successful",
-            message: "Created a new car",
+            message: "Updated an existing car",
             data: {
                 car: updatedCar,
             },
