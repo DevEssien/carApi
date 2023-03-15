@@ -36,6 +36,9 @@ app.use((error, req, res, next) => {
     });
 });
 
+app.use(homeRoute);
+app.use("/auth/dealer", dealerAuthRoute);
+
 app.use(async (req, res, next) => {
     try {
         const dealer = await Dealer.findOne({ where: { email: req.body?.email } });
@@ -49,9 +52,6 @@ app.use(async (req, res, next) => {
         console.log(error);
     }
 });
-
-app.use(homeRoute);
-app.use("/auth/dealer", dealerAuthRoute);
 app.use("/dealer", dealerRoute);
 
 Dealer.hasMany(Car);

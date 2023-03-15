@@ -10,4 +10,8 @@ router.post("/signup", dealerAuthController.postSignup);
 
 router.post("/login", dealerAuthController.postLogin);
 
+router.post("/delete-account", dealerAuthController.postDeleteDealer);
+
+// router.post('/logout')
+
 module.exports = router;

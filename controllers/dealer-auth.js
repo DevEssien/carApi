@@ -1,5 +1,6 @@
 const bcrpyt = require("bcryptjs");
 const Dealer = require("../models/dealer");
+const Car = require("../models/car");
 
 exports.getDealerPage = (req, res, next) => {
     return res.status(200).json({
@@ -10,6 +11,7 @@ exports.getDealerPage = (req, res, next) => {
 
 exports.postSignup = async (req, res, next) => {
     const { email, password, name, phoneno } = req.body;
+    console.log("email", email);
     try {
         const dealer = await Dealer.findOne({ where: { email: email } });
         if (dealer) {
@@ -76,4 +78,47 @@ exports.postLogin = async (req, res, next) => {
         }
         next(error);
     }
+};
+
+exports.postDeleteDealer = async (req, res, next) => {
+    const id = req.body?.id;
+    try {
+        const dealer = await Dealer.findOne({ where: { id: id } });
+        const cars = await Car.findAll({ where: { DealerId: id } });
+        if (!dealer) {
+            const error = new Error("Dealer not found");
+            error.statusCode = 404;
+            throw error;
+        }
+        const DealerRemoved = await Dealer.destroy({ where: { id: id } });
+        if (!DealerRemoved) {
+            const error = new Error("Dealer Deletion failed");
+            error.statusCode = 500;
+            throw error;
+        }
+        if (!cars) {
+            const error = new Error("Cars not found");
+            error.statusCode = 404;
+            throw error;
+        }
+        const carsRemoved = await Car.destroy({ where: { DealerId: null } });
+        if (!carsRemoved) {
+            const error = new Error("Car Deletion failed");
+            error.statusCode = 500;
+            throw error;
+        }
+        return res.status(200).json({
+            status: "Successful",
+            message: `Removed an existing Dealer and cars`,
+        });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+};
+
+exports.postLogout = async (req, res, next) => {
+    //code
 };
