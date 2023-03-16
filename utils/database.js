@@ -8,3 +8,5 @@ const sequelize = new Sequelize("cars", process.env.DB_USER, process.env.DB_PASS
 });
 
 module.exports = sequelize;
+
+//mysql host: 127.0.0.1

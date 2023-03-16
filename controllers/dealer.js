@@ -2,6 +2,7 @@ const Dealer = require("../models/dealer");
 const Car = require("../models/car");
 
 const cloudinary = require("../utils/cloudinary");
+const { request } = require("express");
 
 exports.postAddCar = async (req, res, next) => {
     const { name, brand, image_url, price } = req.body;
@@ -41,10 +42,11 @@ exports.postCarImage = async (req, res, next) => {
         }
         console.log("req.file exist");
         const result = await cloudinary.uploader.upload(req.file.path);
-        const imageurl = cloudinary.url(req.file.path, { width: 100, height: 150, crop: "fill" });
-        if (!result) {
+        const image_url = result.secure_url;
+        
+        if (!result.public_id) {
             const error = new Error("Poor network or Server side error");
-            error.statusCode = 422;
+            error.statusCode = 500;
             throw error;
         }
         return res.status(201).json({
@@ -53,6 +55,7 @@ exports.postCarImage = async (req, res, next) => {
             data: {
                 result: result,
                 imageurl: imageurl,
+                imagesrc: imagesrc
             },
         });
     } catch (error) {
@@ -128,3 +131,4 @@ const clearImage = (filePath) => {
     filePath = path.join(__dirname, "..", filePath);
     fs.unlink(filePath, (err) => console.log(err));
 };
+
