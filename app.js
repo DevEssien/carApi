@@ -68,7 +68,7 @@ const create_table = async () => {
     await Dealer.sync();
     // await Dealer.destroy({ where: { email: "essienemma300@gmail.com" } });
 };
-create_table();
+// create_table();
 
 app.listen(3000, () => {
     console.log("server spinning at port 3000");

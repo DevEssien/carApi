@@ -40,10 +40,17 @@ exports.postCarImage = async (req, res, next) => {
             error.statusCode = 422;
             throw error;
         }
-        console.log("req.file exist");
+        const car = await Car.findOne({ where: { id: 3 } });
+        if (!car) {
+            const error = new Error("Car not found");
+            error.statusCode = 404;
+            throw error;
+        }
         const result = await cloudinary.uploader.upload(req.file.path);
         const image_url = result.secure_url;
-        
+        car.image_url = image_url;
+        const updatedCar = await car.save();
+
         if (!result.public_id) {
             const error = new Error("Poor network or Server side error");
             error.statusCode = 500;
@@ -53,9 +60,8 @@ exports.postCarImage = async (req, res, next) => {
             status: "Successful",
             message: "Uploaded image file to cloudinary",
             data: {
+                car: updatedCar,
                 result: result,
-                imageurl: imageurl,
-                imagesrc: imagesrc
             },
         });
     } catch (error) {
@@ -131,4 +137,3 @@ const clearImage = (filePath) => {
     filePath = path.join(__dirname, "..", filePath);
     fs.unlink(filePath, (err) => console.log(err));
 };
-
