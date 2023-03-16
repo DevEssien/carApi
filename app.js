@@ -64,8 +64,8 @@ Car.belongsTo(Dealer, {
 const create_table = async () => {
     // await Car.sync({ force: true });
     // await Dealer.sync({ force: true });
-    await Car.sync();
-    await Dealer.sync();
+    // await Car.sync();
+    // await Dealer.sync();
     // await Dealer.destroy({ where: { email: "essienemma300@gmail.com" } });
 };
 // create_table();

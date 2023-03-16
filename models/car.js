@@ -20,6 +20,10 @@ const Car = sequelize.define("Car", {
         type: DataTypes.STRING,
         defaultValue: null,
     },
+    image_public_id: {
+        type: DataTypes.STRING,
+        defaultValue: null,
+    },
     years: {
         type: DataTypes.INTEGER,
         defaultValue: null,

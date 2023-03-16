@@ -46,22 +46,36 @@ exports.postCarImage = async (req, res, next) => {
             error.statusCode = 404;
             throw error;
         }
+        if (req.file.path === car.image_url) {
+            return res.status(200).json({
+                status: "Successful",
+                message: "Image is same",
+                data: {
+                    car: car,
+                },
+            });
+        }
         const result = await cloudinary.uploader.upload(req.file.path);
-        const image_url = result.secure_url;
-        car.image_url = image_url;
-        const updatedCar = await car.save();
-
         if (!result.public_id) {
             const error = new Error("Poor network or Server side error");
             error.statusCode = 500;
             throw error;
         }
+        const deleteImageonCloudinary = await cloudinary.v2.uploader.destroy(result.public_id);
+        const image_url = result.secure_url;
+        car.image_url = image_url;
+        const updatedCar = await car.save();
+        clearImage(req.file.path);
+
         return res.status(201).json({
             status: "Successful",
             message: "Uploaded image file to cloudinary",
             data: {
                 car: updatedCar,
-                result: result,
+                cloudinaryResult: {
+                    result,
+                    deleteImageonCloudinary,
+                },
             },
         });
     } catch (error) {
@@ -137,3 +151,6 @@ const clearImage = (filePath) => {
     filePath = path.join(__dirname, "..", filePath);
     fs.unlink(filePath, (err) => console.log(err));
 };
+
+//delete image in cloudinary
+// const deleteImageonCloudinary = await cloudinary.v2.uploader.destroy(result.public_id)
