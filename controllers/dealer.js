@@ -1,6 +1,8 @@
 const Dealer = require("../models/dealer");
 const Car = require("../models/car");
 
+const cloudinary = require("../utils/cloudinary");
+
 exports.postAddCar = async (req, res, next) => {
     const { name, brand, image_url, price } = req.body;
     try {
@@ -20,6 +22,37 @@ exports.postAddCar = async (req, res, next) => {
             message: "Created a new car",
             data: {
                 car: newCar,
+            },
+        });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+};
+
+exports.postCarImage = async (req, res, next) => {
+    try {
+        if (!req.file) {
+            const error = new Error("No file uploaded");
+            error.statusCode = 422;
+            throw error;
+        }
+        console.log("req.file exist");
+        const result = await cloudinary.uploader.upload(req.file.path);
+        const imageurl = cloudinary.url(req.file.path, { width: 100, height: 150, crop: "fill" });
+        if (!result) {
+            const error = new Error("Poor network or Server side error");
+            error.statusCode = 422;
+            throw error;
+        }
+        return res.status(201).json({
+            status: "Successful",
+            message: "Uploaded image file to cloudinary",
+            data: {
+                result: result,
+                imageurl: imageurl,
             },
         });
     } catch (error) {

@@ -7,6 +7,7 @@ const multer = require("multer");
 const dealerAuthRoute = require("./routes/dealer-auth");
 const dealerRoute = require("./routes/dealer");
 const homeRoute = require("./routes/home");
+
 const Car = require("./models/car");
 const Dealer = require("./models/dealer");
 
@@ -38,6 +39,7 @@ app.use((error, req, res, next) => {
 
 app.use(homeRoute);
 app.use("/auth/dealer", dealerAuthRoute);
+app.use("/dealer", dealerRoute);
 
 app.use(async (req, res, next) => {
     try {
@@ -52,8 +54,6 @@ app.use(async (req, res, next) => {
         console.log(error);
     }
 });
-app.use("/dealer", dealerRoute);
-
 Dealer.hasMany(Car);
 
 Car.belongsTo(Dealer, {
@@ -66,7 +66,7 @@ const create_table = async () => {
     // await Dealer.sync({ force: true });
     // await Car.sync();
     // await Dealer.sync();
-    // await Dealer.destroy({ where: { email: "essienemma300@gmail.com" } });s
+    // await Dealer.destroy({ where: { email: "essienemma300@gmail.com" } });
 };
 // create_table();
 
