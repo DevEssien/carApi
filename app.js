@@ -1,8 +1,8 @@
+
 const express = require("express");
 const bodyParser = require("body-parser");
 const path = require("path");
 const fs = require("fs");
-const multer = require("multer");
 
 const dealerAuthRoute = require("./routes/dealer-auth");
 const dealerRoute = require("./routes/dealer");
@@ -13,18 +13,13 @@ const Dealer = require("./models/dealer");
 
 const app = express();
 
-const fileStorage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, "images");
-    },
-    filename: (req, file, cb) => {
-        cb(null, new Date().toISOString().replace(/:/g, "-") + "-" + file.originalname);
-    },
-});
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'))
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(multer({ storage: fileStorage }).single("image"));
+app.use(express.static(path.join(__dirname, 'public')))
+
 
 app.use((error, req, res, next) => {
     const status = error?.statusCode || 500;
@@ -40,7 +35,6 @@ app.use((error, req, res, next) => {
 app.use(homeRoute);
 app.use("/auth/dealer", dealerAuthRoute);
 app.use("/dealer", dealerRoute);
-
 app.use(async (req, res, next) => {
     try {
         const dealer = await Dealer.findOne({ where: { email: req.body?.email } });
@@ -54,6 +48,7 @@ app.use(async (req, res, next) => {
         console.log(error);
     }
 });
+
 Dealer.hasMany(Car);
 
 Car.belongsTo(Dealer, {
@@ -62,10 +57,10 @@ Car.belongsTo(Dealer, {
 });
 
 const create_table = async () => {
-    // await Car.sync({ force: true });
     // await Dealer.sync({ force: true });
-    // await Car.sync();
+    // await Car.sync({ force: true });
     // await Dealer.sync();
+    // await Car.sync();
     // await Dealer.destroy({ where: { email: "essienemma300@gmail.com" } });
 };
 // create_table();

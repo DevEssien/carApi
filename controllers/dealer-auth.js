@@ -109,7 +109,7 @@ exports.postDeleteDealer = async (req, res, next) => {
         }
         return res.status(200).json({
             status: "Successful",
-            message: `Removed an existing Dealer and cars`,
+            message: 'Removed an existing Dealer and cars',
         });
     } catch (error) {
         if (!error.statusCode) {

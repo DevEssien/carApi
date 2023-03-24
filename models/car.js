@@ -24,6 +24,10 @@ const Car = sequelize.define("Car", {
         type: DataTypes.STRING,
         defaultValue: null,
     },
+    local_image_path:  {
+        type: DataTypes.STRING,
+        defaultValue: null,
+    },
     years: {
         type: DataTypes.INTEGER,
         defaultValue: null,

@@ -1,3 +1,5 @@
+const path = require('path')
+const fs = require('fs')
 const Dealer = require("../models/dealer");
 const Car = require("../models/car");
 
@@ -40,20 +42,11 @@ exports.postCarImage = async (req, res, next) => {
             error.statusCode = 422;
             throw error;
         }
-        const car = await Car.findOne({ where: { id: 3 } });
+        const car = await Car.findOne({ where: { id: 1 } });
         if (!car) {
             const error = new Error("Car not found");
             error.statusCode = 404;
             throw error;
-        }
-        if (req.file.path === car.image_url) {
-            return res.status(200).json({
-                status: "Successful",
-                message: "Image is same",
-                data: {
-                    car: car,
-                },
-            });
         }
         const result = await cloudinary.uploader.upload(req.file.path);
         if (!result.public_id) {
@@ -61,11 +54,10 @@ exports.postCarImage = async (req, res, next) => {
             error.statusCode = 500;
             throw error;
         }
-        const deleteImageonCloudinary = await cloudinary.v2.uploader.destroy(result.public_id);
-        const image_url = result.secure_url;
-        car.image_url = image_url;
+        car.image_url = result.secure_url;
+        car.image_public_id = result.public_id
+        car.local_image_path = req.file.path
         const updatedCar = await car.save();
-        clearImage(req.file.path);
 
         return res.status(201).json({
             status: "Successful",
@@ -73,8 +65,7 @@ exports.postCarImage = async (req, res, next) => {
             data: {
                 car: updatedCar,
                 cloudinaryResult: {
-                    result,
-                    deleteImageonCloudinary,
+                    result
                 },
             },
         });
@@ -87,7 +78,8 @@ exports.postCarImage = async (req, res, next) => {
 };
 
 exports.editCarDetails = async (req, res, next) => {
-    const { id, name, brand, image_url, price } = req.body;
+    const { name, brand, image_url, price } = req.body;
+    const id = req.params.id;
     try {
         const car = await Car.findOne({ where: { id: id } });
         if (!car) {
@@ -120,9 +112,42 @@ exports.editCarDetails = async (req, res, next) => {
     }
 };
 
+exports.deleteImage = async (req, res, next) => {
+    const id = req.body.id;
+    try{
+        const car = await Car.findOne({ where: { id: id }})
+        if (!car) {
+            const error = new Error("Car not found");
+            error.statusCode = 404;
+            throw error;
+        }
+        await cloudinary.uploader.destroy(car.image_public_id, async (error, result) => {
+            if (error) {
+                const error = new Error("Poor network or Server side error");
+                error.statusCode = 500;
+                throw error;
+            }
+            return res.status(200).json({
+                status: "Successful",
+                message: "deleted image file to cloudinary",
+                data: {
+                    cloudinaryResult: {
+                        result: await result
+                    },
+                },
+            });
+        });
+    } catch(err) {
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err)
+    }
+}
+
 exports.postRemoveCar = async (req, res, next) => {
     try {
-        const id = req.body?.id;
+        const id = req.params?.id;
         const car = await Car.findOne({ where: { id: id } });
         if (!car) {
             const error = new Error("Car not found");
@@ -147,10 +172,14 @@ exports.postRemoveCar = async (req, res, next) => {
     }
 };
 
+
 const clearImage = (filePath) => {
     filePath = path.join(__dirname, "..", filePath);
-    fs.unlink(filePath, (err) => console.log(err));
+    fs.unlink(filePath, (err) => {
+        if (!err) {
+            console.log('deleted the file')
+        }
+        console.log("error ", err)
+    });
 };
 
-//delete image in cloudinary
-// const deleteImageonCloudinary = await cloudinary.v2.uploader.destroy(result.public_id)
